@@ -13,13 +13,13 @@
 #include "animacoes_led.pio.h"
 
 // Wi-Fi
-#define WIFI_SSID "Paixao 2"
-#define WIFI_PASS "25931959"
+#define WIFI_SSID "**********"
+#define WIFI_PASS "**********"
 
 #define I2C_PORT i2c0               // i2c0 pinos 0 e 1, i2c1 pinos 2 e 3
 #define I2C_SDA 0                   // 0 ou 2
 #define I2C_SCL 1                   // 1 ou 3
-#define SEA_LEVEL_PRESSURE 101325.0 // Press√£o ao n√≠vel do mar em Pa
+#define SEA_LEVEL_PRESSURE 101325.0 // Press√É¬£o ao n√É¬≠vel do mar em Pa
 // Display na I2C
 #define I2C_PORT_DISP i2c1
 #define I2C_SDA_DISP 14
@@ -35,21 +35,21 @@
 
 // Pinos dos LEDs e matriz
 #define MATRIZ_LEDS 7       // Pino de controle da matriz de LEDs 5x5
-#define NUM_PIXELS 25       // N˙mero total de LEDs na matriz (5x5)
+#define NUM_PIXELS 25       // N√∫mero total de LEDs na matriz (5x5)
 
-// ================= VARI¡VEIS GLOBAIS DO SISTEMA =================
+// ================= VARI√ÅVEIS GLOBAIS DO SISTEMA =================
 // Hardware PIO para controle da matriz de LEDs
 PIO pio;                    // Controlador PIO
 uint sm;                    // State Machine do PIO
 ssd1306_t ssd;             // Estrutura do display OLED
 
-// VariÔøΩveis globais do sistema
+// Vari√Ø¬ø¬Ωveis globais do sistema
 // Dados dos sensores (simulados ou reais)
 float temperatura = 0;
 float umidade = 0;
 float pressao = 0;
 
-// Limites m·ximos
+// Limites m√°ximos
 float temp_max = 40.0;
 float umid_max = 80.0;
 float pres_max = 102000;
@@ -59,12 +59,12 @@ int Desenho_letra = 0;
 
 char Letra_T, Letra_P, Letra_U;
 
-// ================= ENUMERA«’ES E ESTRUTURAS =================
+// ================= ENUMERA√á√ïES E ESTRUTURAS =================
 /**
- * EnumeraÁ„o para cores dos LEDs
+ * Enumera√ß√£o para cores dos LEDs
  */
 typedef enum {
-    COR_VERMELHO,   // Estado: capacidade m·xima atingida
+    COR_VERMELHO,   // Estado: capacidade m√°xima atingida
     COR_VERDE,      // Estado: funcionamento normal
     COR_AZUL,       // Estado: ambiente vazio
     COR_AMARELO,    // Estado: apenas uma vaga restante
@@ -72,24 +72,24 @@ typedef enum {
 } CorLED;
 
 /**
- * Estrutura para controle de debounce dos botıes
+ * Estrutura para controle de debounce dos bot√µes
  */
 typedef struct {
-    uint32_t last_time;     // Timestamp do ˙ltimo pressionamento
-    bool last_state;        // Estado anterior do bot„o
+    uint32_t last_time;     // Timestamp do √∫ltimo pressionamento
+    bool last_state;        // Estado anterior do bot√£o
 } DebounceState;
 
 
-// Fun√ß√£o para calcular a altitude a partir da press√£o atmosf√©rica
+// Fun√É¬ß√É¬£o para calcular a altitude a partir da press√É¬£o atmosf√É¬©rica
 double calculate_altitude(double pressure)
 {
     return 44330.0 * (1.0 - pow(pressure / SEA_LEVEL_PRESSURE, 0.1903));
 }
 
-// ================= PADR’ES DA MATRIZ DE LEDS =================
+// ================= PADR√ïES DA MATRIZ DE LEDS =================
 /**
- * Matriz com padrıes visuais para a matriz de LEDs 5x5
- * Cada array representa um padr„o diferente (seta/apagado)
+ * Matriz com padr√µes visuais para a matriz de LEDs 5x5
+ * Cada array representa um padr√£o diferente (seta/apagado)
  */
 double padroes_led[3][25] = {
     // Letra T de temperatura
@@ -106,7 +106,7 @@ double padroes_led[3][25] = {
      0, 1, 0, 1, 0, 
      0, 0, 0, 0, 0},
 
-    // Letra P de press„o
+    // Letra P de press√£o
     {0, 0, 0, 0, 0, 
      0, 1, 0, 0, 0, 
      0, 1, 1, 1, 0, 
@@ -114,7 +114,7 @@ double padroes_led[3][25] = {
      0, 0, 0, 0, 0}
 };
 
-// ================= FUN«’ES DE CONTROLE DA MATRIZ DE LEDS =================
+// ================= FUN√á√ïES DE CONTROLE DA MATRIZ DE LEDS =================
 /**
  * Converte valores RGBW em formato de cor para a matriz de LEDs
  * 
@@ -133,7 +133,7 @@ uint32_t matrix_rgb(double r, double g, double b, double w) {
 }
 
 /**
- * Atualiza toda a matriz de LEDs com o padr„o e cor especificados
+ * Atualiza toda a matriz de LEDs com o padr√£o e cor especificados
  * 
  * r Intensidade do vermelho
  * g Intensidade do verde
@@ -149,7 +149,7 @@ void Desenho_matriz_leds(double r, double g, double b, double w) {
 }
 
 /**
- * Atualiza a matriz de LEDs usando cor prÈ-definida
+ * Atualiza a matriz de LEDs usando cor pr√©-definida
  * 
  * cor Cor do enum CorLED
  */
@@ -165,10 +165,10 @@ void Desenho_matriz_leds_cor(CorLED cor) {
     Desenho_matriz_leds(g, r, b, p);
 }
 
-// ================= HANDLERS DE INTERRUP«√O =================
+// ================= HANDLERS DE INTERRUP√á√ÉO =================
 /**
- * Handler de interrupÁ„o GPIO para o bot„o de reset
- * Implementa debounce por hardware e libera sem·foro para reset
+ * Handler de interrup√ß√£o GPIO para o bot√£o de reset
+ * Implementa debounce por hardware e libera sem√°foro para reset
  */
 void gpio_irq_handler(uint gpio, uint32_t events) {
     static uint32_t last_time = 0;
@@ -177,7 +177,7 @@ void gpio_irq_handler(uint gpio, uint32_t events) {
     // Debouncing de 300ms (300000 microsegundos)
     if ((current_time - last_time) > 300000) {
         
-        // Verifica se È o bot„o correto E se est· pressionado (LOW devido ao pull-up)
+        // Verifica se √© o bot√£o correto E se est√° pressionado (LOW devido ao pull-up)
         if (gpio == Botao_A && !gpio_get(Botao_A)) {
             last_time = current_time;
             
@@ -191,7 +191,7 @@ void gpio_irq_handler(uint gpio, uint32_t events) {
         }
     }
 }
-// P·gina HTML servida pelo servidor
+// P√°gina HTML servida pelo servidor
 const char HTML_BODY[] =
 "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Monitoramento Avancado</title>"
 "<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js'></script>"
@@ -266,13 +266,13 @@ const char HTML_BODY[] =
 "</div>"
 
 "<script>"
-// Vari·veis globais
+// Vari√°veis globais
 "let labels = [], tempData = [], umidData = [], presData = [];"
 "let tempOrigData = [], umidOrigData = [], presOrigData = [];"
 "let maxDataPoints = 50;"
 "let graficoTemp, graficoUmid, graficoPres;"
 
-// FunÁ„o para criar os gr·ficos
+// Fun√ß√£o para criar os gr√°ficos
 "function criarGraficos() {"
 "if (typeof Chart === 'undefined') {"
 "setTimeout(criarGraficos, 100);"
@@ -308,7 +308,7 @@ const char HTML_BODY[] =
 "scales: {"
 "y: {"
 "beginAtZero: false,"
-"title: {display: true, text: 'Temperatura (∞C)'}"
+"title: {display: true, text: 'Temperatura (¬∞C)'}"
 "},"
 "x: {title: {display: true, text: 'Tempo'}}"
 "},"
@@ -383,7 +383,7 @@ const char HTML_BODY[] =
 "});"
 "}"
 
-// FunÁ„o para atualizar gr·ficos
+// Fun√ß√£o para atualizar gr√°ficos
 "function atualizarGraficos(){"
 "fetch('/dados').then(r=>r.json()).then(data=>{"
 "if(labels.length >= maxDataPoints){"
@@ -412,7 +412,7 @@ const char HTML_BODY[] =
 "}).catch(err=>console.error('Erro ao buscar dados:',err));"
 "}"
 
-// FunÁıes para enviar dados
+// Fun√ß√µes para enviar dados
 "function enviarLimites(){"
 "let t = document.getElementById('temp_max').value;"
 "let p = document.getElementById('pres_max').value;"
@@ -448,9 +448,9 @@ const char HTML_BODY[] =
 "}).catch(err=>console.error('Erro ao buscar offsets:',err));"
 "}"
 
-// InicializaÁ„o quando a p·gina carrega
+// Inicializa√ß√£o quando a p√°gina carrega
 "window.onload = function() {"
-"criarGraficos();" // ESTA … A LINHA QUE ESTAVA FALTANDO!
+"criarGraficos();" // ESTA √â A LINHA QUE ESTAVA FALTANDO!
 "buscarOffsets();"
 "atualizarGraficos();"
 "setInterval(atualizarGraficos, 2000);"
@@ -459,7 +459,7 @@ const char HTML_BODY[] =
 "</script>"
 "</div></body></html>";
 
-// Vari·veis para offsets de calibraÁ„o
+// Vari√°veis para offsets de calibra√ß√£o
 float temp_offset = 0.0;
 float umid_offset = 0.0;
 float pres_offset = 0.0;
@@ -482,7 +482,7 @@ static err_t http_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
     return ERR_OK;
 }
 
-// Recebe e trata as requisiÁıes
+// Recebe e trata as requisi√ß√µes
 static err_t http_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
     if (!p) {
         tcp_close(tpcb);
@@ -535,7 +535,7 @@ static err_t http_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t er
         if (pres_str) pres_offset = atof(pres_str + 5);
         if (umid_str) umid_offset = atof(umid_str + 5);
 
-        const char *resp = "Offsets de calibraÁ„o atualizados com sucesso!";
+        const char *resp = "Offsets de calibra√ß√£o atualizados com sucesso!";
         hs->len = snprintf(hs->response, sizeof(hs->response),
             "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/plain; charset=UTF-8\r\n"
@@ -578,7 +578,7 @@ static err_t http_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t er
             "%s", (int)strlen(resp), resp);
     }
     else {
-        const char *resp = "404 - P·gina n„o encontrada";
+        const char *resp = "404 - P√°gina n√£o encontrada";
         hs->len = snprintf(hs->response, sizeof(hs->response),
             "HTTP/1.1 404 Not Found\r\n"
             "Content-Type: text/plain; charset=UTF-8\r\n"
@@ -597,7 +597,7 @@ static err_t http_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t er
     return ERR_OK;
 }
 
-// Configura nova conex„o
+// Configura nova conex√£o
 static err_t connection_callback(void *arg, struct tcp_pcb *newpcb, err_t err) {
     tcp_recv(newpcb, http_recv);
     return ERR_OK;
@@ -670,17 +670,17 @@ void Desenho_Matriz_Leds(){
     switch (Desenho_letra)
     {
     case 0:
-        Desenho_letra = 0;  // Padr„o apagado
+        Desenho_letra = 0;  // Padr√£o apagado
         Desenho_matriz_leds_cor(Letra_T);
         break;
     
     case 1:
-        Desenho_letra = 1;  // Padr„o apagado
+        Desenho_letra = 1;  // Padr√£o apagado
         Desenho_matriz_leds_cor(Letra_U);
         break;
 
     case 2:
-        Desenho_letra = 2;  // Padr„o apagado
+        Desenho_letra = 2;  // Padr√£o apagado
         Desenho_matriz_leds_cor(Letra_P);
         break;
     
@@ -697,13 +697,13 @@ void Desenho_Matriz_Leds(){
 
 int main()
 {
-    // Para ser utilizado o modo BOOTSEL com bot√£o B
+    // Para ser utilizado o modo BOOTSEL com bot√É¬£o B
     gpio_init(Botao_A);
     gpio_set_dir(Botao_A, GPIO_IN);
     gpio_pull_up(Botao_A);
     gpio_set_irq_enabled_with_callback(Botao_A, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
    
-    // InicializaÁ„o PIO para controle da matriz
+    // Inicializa√ß√£o PIO para controle da matriz
     pio = pio0;
     uint offset = pio_add_program(pio, &animacoes_led_program);
     sm = pio_claim_unused_sm(pio, true);
@@ -802,7 +802,7 @@ int main()
         int32_t temperature_bmp = bmp280_convert_temp(raw_temp_bmp, &params);
         int32_t pressure = bmp280_convert_pressure(raw_pressure, raw_temp_bmp, &params);
 
-        // C√°lculo da altitude
+        // C√É¬°lculo da altitude
         double altitude = calculate_altitude(pressure);
 
         printf("Pressao = %.3f kPa\n", pressure / 1000.0);
@@ -843,10 +843,10 @@ int main()
         char ip_display[24];
         snprintf(ip_display, sizeof(ip_display), "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
     
-        //  Atualiza o conte√∫do do display com anima√ß√µes
+        //  Atualiza o conte√É¬∫do do display com anima√É¬ß√É¬µes
         if(Pagina == 1){
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
-        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√¢ngulo
+        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√É¬¢ngulo
         ssd1306_line(&ssd, 1, 25, 123, 25, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 37, 123, 37, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 48, 123, 48, cor);            // Desenha uma linha
@@ -861,7 +861,7 @@ int main()
         } 
         else if (Pagina == 2){
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
-        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√¢ngulo
+        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√É¬¢ngulo
         ssd1306_line(&ssd, 1, 25, 123, 25, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 37, 123, 37, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 49, 123, 49, cor);            // Desenha uma linha
@@ -876,7 +876,7 @@ int main()
         } 
         else if (Pagina == 3){
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
-        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√¢ngulo
+        ssd1306_rect(&ssd, 1, 1, 122, 60, cor, !cor);       // Desenha um ret√É¬¢ngulo
         ssd1306_line(&ssd, 1, 25, 123, 25, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 37, 123, 37, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 49, 123, 49, cor);            // Desenha uma linha
@@ -891,7 +891,7 @@ int main()
         }
         else if (Pagina == 4){
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
-        ssd1306_rect(&ssd, 1, 1, 122, 50, cor, !cor);       // Desenha um ret√¢ngulo
+        ssd1306_rect(&ssd, 1, 1, 122, 50, cor, !cor);       // Desenha um ret√É¬¢ngulo
         ssd1306_line(&ssd, 1, 25, 123, 25, cor);            // Desenha uma linha
         ssd1306_line(&ssd, 1, 38, 123, 38, cor);            // Desenha uma linha
         ssd1306_draw_string(&ssd, "CONEXAO WI-FI", 8, 12);  // Desenha uma string
